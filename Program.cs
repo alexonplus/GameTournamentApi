@@ -1,9 +1,22 @@
+using GameTournamentApi.Data;
+using Microsoft.EntityFrameworkCore;
+using static System.Collections.Specialized.BitVector32;
+
+// DI(Dependency Injection) SECTION 
+
+// 1.creating the builder for the application, which will be used to configure services and middleware.
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+//2. Adding services to the container. This is where you register dependencies that your application will use. In this case its  adding a DbContext for the tournament database
+builder.Services.AddDbContext<TournamentDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+//3.this is for swager 
 builder.Services.AddOpenApi();
 
+
+//4 creating the app
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
