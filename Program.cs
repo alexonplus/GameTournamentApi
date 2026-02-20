@@ -1,4 +1,5 @@
 using GameTournamentApi.Data;
+using GameTournamentApi.Services;
 using Microsoft.EntityFrameworkCore;
 using static System.Collections.Specialized.BitVector32;
 
@@ -10,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 //2. Adding services to the container. This is where you register dependencies that your application will use. In this case its  adding a DbContext for the tournament database
 builder.Services.AddDbContext<TournamentDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<ITournamentService, TournamentService>();
 
 
 //3.this is for swager 
