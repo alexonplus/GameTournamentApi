@@ -19,5 +19,12 @@ namespace GameTournamentApi.Services
         }
 
     
+        public async Task<Tournament> AddTournamentAsync(Tournament tournament)
+        {
+            _context.Tournaments.Add(tournament);
+            await _context.SaveChangesAsync();
+            return tournament;
+        }
+
     }
 }

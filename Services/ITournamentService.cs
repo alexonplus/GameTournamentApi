@@ -7,5 +7,8 @@ namespace GameTournamentApi.Services
         Task<IEnumerable<Tournament>> GetAllTournamentsAsync();
 
         //Enumerable - you can only read.
+
+        Task<Tournament> AddTournamentAsync(Tournament tournament);// Adds a tournament and returns the created entity with its generated ID.
+
     }
 }
