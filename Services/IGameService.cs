@@ -4,10 +4,13 @@ namespace GameTournamentApi.Services
 {
     public interface IGameService
     {
-        // Returns a DTO to avoid circular reference errors
         Task<GameDto?> AddGameAsync(GameCreateDto gameDto);
-
-        // Returns a list of games for a specific tournament
         Task<IEnumerable<GameDto>> GetAllGamesAsync();
+
+        // Added for Get a single game by its unique ID
+        Task<GameDto?> GetGameByIdAsync(int id);
+
+        Task<GameDto?> UpdateGameAsync(int id, GameCreateDto gameDto);
+        Task<bool> DeleteGameAsync(int id);
     }
 }
