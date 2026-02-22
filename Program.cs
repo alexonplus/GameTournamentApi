@@ -12,15 +12,18 @@ using static System.Collections.Specialized.BitVector32;
 var builder = WebApplication.CreateBuilder(args);
 
 // for swager
-builder.Services.AddControllers(); // ??? ????? ?????????? ?????? ???? ???????????!
-builder.Services.AddEndpointsApiExplorer(); // ???????? ??? Swagger
-builder.Services.AddSwaggerGen(); // ????????? ?????? ?????????? Swagger
+builder.Services.AddControllers(); 
+builder.Services.AddEndpointsApiExplorer(); 
+builder.Services.AddSwaggerGen(); 
 
 //2. Adding services to the container. This is where you register dependencies that your application will use. In this case its  adding a DbContext for the tournament database
 builder.Services.AddDbContext<TournamentDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<ITournamentService, TournamentService>();
+
+
+builder.Services.AddScoped<IGameService, GameService>();
 
 
 //3.this is for swager 
@@ -34,8 +37,8 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.UseSwagger();   // 1. ?????????? ???? ? ????????? API
-    app.UseSwaggerUI(); // 2. ??????? ?? ????? ???????? ? ????????
+    app.UseSwagger();   
+    app.UseSwaggerUI(); 
 }
 
 app.UseHttpsRedirection();

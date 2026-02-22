@@ -2,13 +2,17 @@
 {
     public class Game
     {
-public int Id { get; set; }
-        public string Title { get; set; } = string.Empty;
-       
-        public DateTime Time { get; set; }
+        public int Id { get; set; }
+
+      
+        public string Name { get; set; } = string.Empty;
+
+
+        public string Genre { get; set; } = string.Empty;
+
         public int TournamentId { get; set; }
+
+        
         public Tournament Tournament { get; set; } = null!;
-
-
     }
 }
