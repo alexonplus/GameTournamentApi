@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using GameTournamentApi.Services;
 using GameTournamentApi.Models;
 using System.Collections.Generic;
@@ -10,25 +9,22 @@ using System.Linq;
 namespace GameTournamentApi.Controllers
 {
     [Route("api/[controller]")]
-
     [ApiController]
-    
-
-    public class TournamentsController:ControllerBase
-    
+    public class TournamentsController : ControllerBase
     {
         private readonly ITournamentService _service;
 
         public TournamentsController(ITournamentService service)
         {
             _service = service;
-
-            
         }
+
+        // GET: api/tournaments?search=name
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TournamentDto>>> GetTournaments()
+        public async Task<ActionResult<IEnumerable<TournamentDto>>> GetTournaments([FromQuery] string? search)
         {
-            var tournaments = await _service.GetAllTournamentsAsync();
+            // Requirement: get all tournaments or search by title
+            var tournaments = await _service.GetAllTournamentsAsync(search);
 
             var dtoList = tournaments.Select(t => new TournamentDto
             {
@@ -37,18 +33,16 @@ namespace GameTournamentApi.Controllers
                 Description = t.Description,
                 MaxPlayers = t.MaxPlayers,
                 Date = t.Date
-            
             });
 
             return Ok(dtoList);
-
         }
 
-        //post 
+        // POST: api/tournaments
         [HttpPost]
         public async Task<ActionResult<TournamentDto>> CreateTournament([FromBody] TournamentCreateDto createDto)
         {
-            // 1. Map the incoming DTO to the Tournament entity model 
+            // Mapping CreateDto to Entity Model
             var tournament = new Tournament
             {
                 Title = createDto.Title,
@@ -57,10 +51,8 @@ namespace GameTournamentApi.Controllers
                 Date = createDto.Date
             };
 
-            // 2. Save the tournament to the database via the service 
             var createdTournament = await _service.AddTournamentAsync(tournament);
 
-            // 3. Return the result as a DTO (now including the generated ID) i hope  
             var resultDto = new TournamentDto
             {
                 Id = createdTournament.Id,
@@ -73,10 +65,50 @@ namespace GameTournamentApi.Controllers
             return Ok(resultDto);
         }
 
+        // PUT: api/tournaments/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTournament(int id, [FromBody] TournamentCreateDto updateDto)
+        {
+            // Map incoming DTO to Model for updating
+            var tournamentData = new Tournament
+            {
+                Title = updateDto.Title,
+                Description = updateDto.Description,
+                MaxPlayers = updateDto.MaxPlayers,
+                Date = updateDto.Date
+            };
 
+            var updated = await _service.UpdateTournamentAsync(id, tournamentData);
 
+            if (updated == null)
+            {
+                return NotFound();
+            }
 
+            // Return the updated object as a DTO to be safe
+            return Ok(new TournamentDto
+            {
+                Id = updated.Id,
+                Title = updated.Title,
+                Description = updated.Description,
+                MaxPlayers = updated.MaxPlayers,
+                Date = updated.Date
+            });
+        }
 
+        // DELETE: api/tournaments/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTournament(int id)
+        {
+            var success = await _service.DeleteTournamentAsync(id);
 
+            if (!success)
+            {
+                return NotFound();
+            }
+
+            // Return 204 No Content for successful deletion
+            return NoContent();
+        }
     }
 }

@@ -11,12 +11,12 @@ namespace GameTournamentApi.Data
             : base(options)
         {
         }
-        public DbSet<Tournament> Tournaments { get; set; } = null;
+        public DbSet<Tournament> Tournaments { get; set; } = null; // This property represents the Tournaments table in the database. It is of type DbSet<Tournament>, which allows for querying and saving instances of the Tournament entity. The null value is used to satisfy the compiler
         public DbSet<Game> Games { get; set; } = null;
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder) // This method is overridden to configure the model and seed initial data into the database. The ModelBuilder parameter allows for configuring the entity models and relationships.
         {
-            modelBuilder.Entity<Tournament>().HasData(
+            modelBuilder.Entity<Tournament>().HasData(  // This line seeds initial data into the Tournaments table. It creates a new Tournament object with specified properties and adds it to the database when the context is created.
                 new Tournament
                 {
                     Id = 1,

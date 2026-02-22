@@ -1,14 +1,17 @@
 ﻿using GameTournamentApi.Models;
+
 namespace GameTournamentApi.Services
 {
     public interface ITournamentService
     {
-         // The method promises to return an enumerable list (IEnumerable) of tournaments asynchronously
-        Task<IEnumerable<Tournament>> GetAllTournamentsAsync();
+        // Added 'search' parameter 
+        Task<IEnumerable<Tournament>> GetAllTournamentsAsync(string? search);
 
-        //Enumerable - you can only read.
+        Task<Tournament> AddTournamentAsync(Tournament tournament);
 
-        Task<Tournament> AddTournamentAsync(Tournament tournament);// Adds a tournament and returns the created entity with its generated ID.
+        // Required for full CRUD 
+        Task<Tournament?> UpdateTournamentAsync(int id, Tournament tournament);
 
+        Task<bool> DeleteTournamentAsync(int id);
     }
 }

@@ -14,18 +14,28 @@ namespace GameTournamentApi.Services
             _context = context;
         }
 
+        // Implementation for getting a specific game by ID
+        public async Task<GameDto?> GetGameByIdAsync(int id)
+        {
+            var game = await _context.Games.FindAsync(id);
+            if (game == null) return null;
+
+            return new GameDto
+            {
+                Id = game.Id,
+                Name = game.Name,
+                Genre = game.Genre,
+                TournamentId = game.TournamentId
+            };
+        }
+
         public async Task<GameDto?> AddGameAsync(GameCreateDto gameDto)
         {
-            // 1. Verify that the tournament exists
             var tournament = await _context.Tournaments
                 .FirstOrDefaultAsync(t => t.Id == gameDto.TournamentId);
 
-            if (tournament == null)
-            {
-                return null;
-            }
+            if (tournament == null) return null;
 
-            // 2. Map DTO to Model
             var newGame = new Game
             {
                 Name = gameDto.Name,
@@ -33,11 +43,9 @@ namespace GameTournamentApi.Services
                 TournamentId = gameDto.TournamentId
             };
 
-            // 3. Save to database
             _context.Games.Add(newGame);
             await _context.SaveChangesAsync();
 
-            // 4. Return clean DTO (prevents 500 circular reference error)
             return new GameDto
             {
                 Id = newGame.Id,
@@ -58,6 +66,39 @@ namespace GameTournamentApi.Services
                     TournamentId = g.TournamentId
                 })
                 .ToListAsync();
+        }
+
+        public async Task<GameDto?> UpdateGameAsync(int id, GameCreateDto gameDto)
+        {
+            var existing = await _context.Games.FindAsync(id);
+            if (existing == null) return null;
+
+            var tournamentExists = await _context.Tournaments.AnyAsync(t => t.Id == gameDto.TournamentId);
+            if (!tournamentExists) return null;
+
+            existing.Name = gameDto.Name;
+            existing.Genre = gameDto.Genre;
+            existing.TournamentId = gameDto.TournamentId;
+
+            await _context.SaveChangesAsync();
+
+            return new GameDto
+            {
+                Id = existing.Id,
+                Name = existing.Name,
+                Genre = existing.Genre,
+                TournamentId = existing.TournamentId
+            };
+        }
+
+        public async Task<bool> DeleteGameAsync(int id)
+        {
+            var game = await _context.Games.FindAsync(id);
+            if (game == null) return false;
+
+            _context.Games.Remove(game);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }
