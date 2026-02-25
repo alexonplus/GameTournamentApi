@@ -1,17 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using GameTournamentApi.Services;
+﻿using GameTournamentApi.DTOs;
 using GameTournamentApi.Models;
+using GameTournamentApi.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using GameTournamentApi.DTOs;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace GameTournamentApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize] //security requirement: all endpoints require authentication
     public class TournamentsController : ControllerBase
     {
+
+       
+
         private readonly ITournamentService _service;
 
         public TournamentsController(ITournamentService service)
